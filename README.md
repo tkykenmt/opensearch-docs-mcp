@@ -146,6 +146,19 @@ Search OpenSearch community forum.
 }
 ```
 
+## Combining with Other MCPs
+
+This MCP focuses on OpenSearch knowledge resources (docs, blogs, forum). For source code search, use it together with the [GitHub MCP](https://github.com/modelcontextprotocol/servers/tree/main/src/github):
+
+| Use Case | MCP |
+|----------|-----|
+| API usage, configuration, concepts | OpenSearch Docs MCP |
+| Implementation details, source code | GitHub MCP |
+
+Example workflow:
+1. Search docs/blogs for "semantic field" usage → OpenSearch Docs MCP
+2. Find the actual implementation in `opensearch-project/OpenSearch` → GitHub MCP
+
 ## Development
 
 ```bash
