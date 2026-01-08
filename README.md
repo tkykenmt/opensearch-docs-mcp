@@ -148,7 +148,7 @@ Search OpenSearch community forum.
 
 ## Combining with Other MCPs
 
-This MCP focuses on OpenSearch knowledge resources (docs, blogs, forum). For source code search, use it together with the [GitHub MCP](https://github.com/modelcontextprotocol/servers/tree/main/src/github):
+This MCP focuses on OpenSearch knowledge resources (docs, blogs, forum). For source code search, use it together with the [GitHub MCP](https://github.com/github/github-mcp-server):
 
 | Use Case | MCP |
 |----------|-----|
@@ -158,6 +158,25 @@ This MCP focuses on OpenSearch knowledge resources (docs, blogs, forum). For sou
 Example workflow:
 1. Search docs/blogs for "semantic field" usage → OpenSearch Docs MCP
 2. Find the actual implementation in `opensearch-project/OpenSearch` → GitHub MCP
+
+### Using GitHub MCP with Kiro CLI
+
+If you're using Kiro CLI with `gh auth token` for authentication, the GitHub MCP requires a slightly different setup since it expects a `GITHUB_PERSONAL_ACCESS_TOKEN` environment variable.
+
+Here's a workaround configuration:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "sh",
+      "args": ["-c", "GITHUB_PERSONAL_ACCESS_TOKEN=$(gh auth token) npx -y @modelcontextprotocol/server-github"]
+    }
+  }
+}
+```
+
+This dynamically injects the token from `gh auth token` into the environment variable that the GitHub MCP expects.
 
 ## Development
 
