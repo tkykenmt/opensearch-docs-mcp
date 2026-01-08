@@ -10,7 +10,8 @@ MCP server for searching OpenSearch documentation, blogs, and community forums.
 
 ## Features
 
-- 🔍 **Documentation Search** - Search official OpenSearch docs and blogs
+- 🔍 **Documentation Search** - Search official OpenSearch docs
+- 📝 **Blog Search** - Search OpenSearch blog posts
 - 💬 **Forum Search** - Search community forum posts and discussions
 - 🚀 **Fast** - LRU cache (100 entries) for repeated queries
 - 📦 **Zero Config** - Works out of the box with Claude Desktop, Cursor, etc.
@@ -63,32 +64,57 @@ Add to MCP settings:
 
 ### search_docs
 
-Search OpenSearch documentation and blogs.
+Search OpenSearch documentation.
 
 **Parameters:**
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `query` | string | (required) | Search query |
 | `version` | string | "3.0" | OpenSearch version |
-| `types` | string | "docs,blogs" | Content types: "docs", "blogs", or "docs,blogs" |
 | `limit` | integer | 10 | Max results per page |
 | `offset` | integer | 0 | Skip first N results for pagination |
 
-**Example output:**
+**Example:**
 ```json
 {
   "query": "k-NN",
   "version": "3.0",
   "total": 18,
-  "offset": 0,
-  "limit": 3,
   "hasMore": true,
   "results": [
     {
       "title": "k-NN",
       "url": "https://docs.opensearch.org/3.0/query-dsl/specialized/k-nn/index/",
-      "type": "DOCS",
       "snippet": "Use the knn query for running nearest neighbor searches on vector fields."
+    }
+  ]
+}
+```
+
+### search_blogs
+
+Search OpenSearch blog posts.
+
+**Parameters:**
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `query` | string | (required) | Search query |
+| `version` | string | "3.0" | OpenSearch version |
+| `limit` | integer | 10 | Max results per page |
+| `offset` | integer | 0 | Skip first N results for pagination |
+
+**Example:**
+```json
+{
+  "query": "release",
+  "version": "3.0",
+  "total": 5,
+  "hasMore": false,
+  "results": [
+    {
+      "title": "OpenSearch 3.0 is here!",
+      "url": "https://opensearch.org/blog/opensearch-3-0-is-here/",
+      "snippet": "We are excited to announce the release of OpenSearch 3.0..."
     }
   ]
 }
@@ -104,7 +130,7 @@ Search OpenSearch community forum.
 | `query` | string | (required) | Search query |
 | `limit` | integer | 10 | Max results |
 
-**Example output:**
+**Example:**
 ```json
 {
   "query": "vector search",

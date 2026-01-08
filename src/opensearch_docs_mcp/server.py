@@ -33,23 +33,8 @@ def _fetch_forum(query: str) -> tuple:
     return tuple(posts), topics, data.get("grouped_search_result", {}).get("more_posts", False)
 
 
-@mcp.tool()
-def search_docs(
-    query: str,
-    version: str = "3.0",
-    types: str = "docs,blogs",
-    limit: int = 10,
-    offset: int = 0,
-) -> dict:
-    """Search OpenSearch documentation and blogs.
-
-    Args:
-        query: Search query
-        version: OpenSearch version (default: 3.0)
-        types: Content types - docs, blogs, or docs,blogs
-        limit: Max results per page (default: 10)
-        offset: Skip first N results for pagination (default: 0)
-    """
+def _search_content(query: str, version: str, types: str, limit: int, offset: int) -> dict:
+    """Internal search function for docs/blogs."""
     all_results = list(_fetch_docs(query, version, types))
     total = len(all_results)
     page_results = all_results[offset : offset + limit]
@@ -62,7 +47,6 @@ def search_docs(
         results.append({
             "title": r["title"],
             "url": url,
-            "type": r["type"],
             "snippet": r.get("content", "")[:300],
         })
 
@@ -75,6 +59,42 @@ def search_docs(
         "hasMore": offset + limit < total,
         "results": results,
     }
+
+
+@mcp.tool()
+def search_docs(
+    query: str,
+    version: str = "3.0",
+    limit: int = 10,
+    offset: int = 0,
+) -> dict:
+    """Search OpenSearch documentation.
+
+    Args:
+        query: Search query
+        version: OpenSearch version (default: 3.0)
+        limit: Max results per page (default: 10)
+        offset: Skip first N results for pagination (default: 0)
+    """
+    return _search_content(query, version, "docs", limit, offset)
+
+
+@mcp.tool()
+def search_blogs(
+    query: str,
+    version: str = "3.0",
+    limit: int = 10,
+    offset: int = 0,
+) -> dict:
+    """Search OpenSearch blog posts.
+
+    Args:
+        query: Search query
+        version: OpenSearch version (default: 3.0)
+        limit: Max results per page (default: 10)
+        offset: Skip first N results for pagination (default: 0)
+    """
+    return _search_content(query, version, "blogs", limit, offset)
 
 
 @mcp.tool()

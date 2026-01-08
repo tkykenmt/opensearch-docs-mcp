@@ -1,7 +1,6 @@
 """Tests for opensearch-docs-mcp."""
 
 import json
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -11,10 +10,7 @@ class TestSearchDocs:
 
     def test_search_docs_returns_expected_structure(self):
         """Test that search_docs returns correct response structure."""
-        from opensearch_docs_mcp.server import search_docs
-
-        # Clear cache for clean test
-        from opensearch_docs_mcp.server import _fetch_docs
+        from opensearch_docs_mcp.server import search_docs, _fetch_docs
         _fetch_docs.cache_clear()
 
         result = search_docs("test", limit=2)
@@ -39,7 +35,6 @@ class TestSearchDocs:
             item = result["results"][0]
             assert "title" in item
             assert "url" in item
-            assert "type" in item
             assert "snippet" in item
 
     def test_search_docs_pagination(self):
@@ -50,7 +45,6 @@ class TestSearchDocs:
         result1 = search_docs("index", limit=2, offset=0)
         result2 = search_docs("index", limit=2, offset=2)
 
-        # Results should be different
         if result1["results"] and result2["results"]:
             assert result1["results"][0]["url"] != result2["results"][0]["url"]
 
@@ -65,15 +59,43 @@ class TestSearchDocs:
             assert len(item["snippet"]) <= 300
 
     def test_search_docs_url_prefix(self):
-        """Test that DOCS type URLs have correct prefix."""
+        """Test that docs URLs have correct prefix."""
         from opensearch_docs_mcp.server import search_docs, _fetch_docs
         _fetch_docs.cache_clear()
 
-        result = search_docs("install", types="docs", limit=5)
+        result = search_docs("install", limit=5)
 
         for item in result["results"]:
-            if item["type"] == "DOCS":
-                assert item["url"].startswith("https://docs.opensearch.org")
+            assert item["url"].startswith("https://docs.opensearch.org")
+
+
+class TestSearchBlogs:
+    """Tests for search_blogs tool."""
+
+    def test_search_blogs_returns_expected_structure(self):
+        """Test that search_blogs returns correct response structure."""
+        from opensearch_docs_mcp.server import search_blogs, _fetch_docs
+        _fetch_docs.cache_clear()
+
+        result = search_blogs("release", limit=2)
+
+        assert "query" in result
+        assert "version" in result
+        assert "total" in result
+        assert "results" in result
+
+    def test_search_blogs_result_item_structure(self):
+        """Test that each blog result has expected fields."""
+        from opensearch_docs_mcp.server import search_blogs, _fetch_docs
+        _fetch_docs.cache_clear()
+
+        result = search_blogs("announcement", limit=1)
+
+        if result["results"]:
+            item = result["results"][0]
+            assert "title" in item
+            assert "url" in item
+            assert "snippet" in item
 
 
 class TestSearchForum:
@@ -162,7 +184,16 @@ class TestResponseSize:
         result = search_docs("vector", limit=10)
         response_json = json.dumps(result)
 
-        # 10 results should be under 10KB
+        assert len(response_json) < 10000, f"Response too large: {len(response_json)} chars"
+
+    def test_blogs_response_size_reasonable(self):
+        """Test that blogs response doesn't exceed reasonable size."""
+        from opensearch_docs_mcp.server import search_blogs, _fetch_docs
+        _fetch_docs.cache_clear()
+
+        result = search_blogs("release", limit=10)
+        response_json = json.dumps(result)
+
         assert len(response_json) < 10000, f"Response too large: {len(response_json)} chars"
 
     def test_forum_response_size_reasonable(self):
@@ -173,7 +204,6 @@ class TestResponseSize:
         result = search_forum("error", limit=10)
         response_json = json.dumps(result)
 
-        # 10 results should be under 10KB
         assert len(response_json) < 10000, f"Response too large: {len(response_json)} chars"
 
 
@@ -185,7 +215,6 @@ class TestErrorHandling:
         from opensearch_docs_mcp.server import search_docs, _fetch_docs
         _fetch_docs.cache_clear()
 
-        # Very specific query unlikely to have results
         result = search_docs("xyznonexistentquery12345", limit=10)
 
         assert result["total"] == 0
