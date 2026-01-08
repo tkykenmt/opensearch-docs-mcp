@@ -1,6 +1,5 @@
 # opensearch-docs-mcp
 
-[![PyPI version](https://badge.fury.io/py/opensearch-docs-mcp.svg)](https://badge.fury.io/py/opensearch-docs-mcp)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -20,12 +19,9 @@ MCP server for searching OpenSearch documentation, blogs, and community forums.
 ## Installation
 
 ```bash
-# Using uvx (recommended)
-uvx opensearch-docs-mcp
-
-# Using pip
-pip install opensearch-docs-mcp
-opensearch-docs-mcp
+git clone https://github.com/tkykenmt/opensearch-docs-mcp.git
+cd opensearch-docs-mcp
+uv sync
 ```
 
 ## Configuration
@@ -38,8 +34,8 @@ Add to `claude_desktop_config.json`:
 {
   "mcpServers": {
     "opensearch-docs": {
-      "command": "uvx",
-      "args": ["opensearch-docs-mcp"]
+      "command": "uv",
+      "args": ["--directory", "/path/to/opensearch-docs-mcp", "run", "opensearch-docs-mcp"]
     }
   }
 }
@@ -53,8 +49,8 @@ Add to MCP settings:
 {
   "mcpServers": {
     "opensearch-docs": {
-      "command": "uvx",
-      "args": ["opensearch-docs-mcp"]
+      "command": "uv",
+      "args": ["--directory", "/path/to/opensearch-docs-mcp", "run", "opensearch-docs-mcp"]
     }
   }
 }
@@ -153,11 +149,6 @@ Search OpenSearch community forum.
 ## Development
 
 ```bash
-# Clone and install
-git clone https://github.com/tkykenmt/opensearch-docs-mcp.git
-cd opensearch-docs-mcp
-uv sync
-
 # Run in development mode
 uv run mcp dev src/opensearch_docs_mcp/server.py
 
