@@ -148,7 +148,9 @@ Search OpenSearch community forum.
 
 ## Combining with Other MCPs
 
-This MCP focuses on OpenSearch knowledge resources (docs, blogs, forum). For source code search, use it together with the [GitHub MCP](https://github.com/github/github-mcp-server):
+This MCP focuses on OpenSearch knowledge resources (docs, blogs, forum). For source code search, use it together with the [GitHub MCP](https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github):
+
+> **Note**: The original MCP GitHub server has been archived. The official [GitHub MCP Server](https://github.com/github/github-mcp-server) requires a GitHub PAT, so we use the archived version with `gh auth token` as a workaround.
 
 | Use Case | MCP |
 |----------|-----|
